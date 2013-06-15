@@ -34,13 +34,20 @@ class NewVisitorTest(unittest.TestCase):
 # "1: Buy Chicken"
         inputbox.send_keys(Keys.ENTER)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Buy chicken' for row in rows)
-        ,"New to-do item did not appear in table")
 # There is still a text box inviting him to add another item. He enters
 # "2: Cook the chicken tonight".
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Cook the chicken tonight')
+        inputbox.send_keys(Keys.ENTER)
+
+#The page updates again, and now shows both items on the list
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Buy chicken', [row.text for row in rows])
+        self.assertIn('2: Cook the chicken tonight', 
+                      [row.text for row in rows])
+
         self.fail('Finish the test!')
 # Harry wonders whether or not the site will remember his list. Then he sees
 # that the site has generated an unique URL for him -- there is some 
