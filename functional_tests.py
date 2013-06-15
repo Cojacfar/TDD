@@ -33,6 +33,7 @@ class NewVisitorTest(unittest.TestCase):
 # When he hits enter, the page updates and now the page lists:
 # "1: Buy Chicken"
         inputbox.send_keys(Keys.ENTER)
+        self.check_for_row_in_list_table('1: Buy chicken')
 
 # There is still a text box inviting him to add another item. He enters
 # "2: Cook the chicken tonight".
@@ -41,13 +42,9 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
 
 #The page updates again, and now shows both items on the list
-
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy chicken', [row.text for row in rows])
-        self.assertIn('2: Cook the chicken tonight', 
-                      [row.text for row in rows])
-
+        
+        self.check_for_row_in_list_table('2: Cook the chicken tonight')
+        self.check_for_row_in_list_table('1: Buy chicken')
         self.fail('Finish the test!')
 # Harry wonders whether or not the site will remember his list. Then he sees
 # that the site has generated an unique URL for him -- there is some 
@@ -56,6 +53,11 @@ class NewVisitorTest(unittest.TestCase):
 # He visits that URL - his to-do lists is still there.
 
 # Satisfied, he goes back to sleep.
+    def check_for_row_in_list_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
 
 if __name__ == '__main__':
     unittest.main()
