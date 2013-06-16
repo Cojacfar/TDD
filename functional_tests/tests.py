@@ -50,10 +50,12 @@ class NewVisitorTest(LiveServerTestCase):
 
         #Now a new user, Francis, comes along to the site
         self.browser.quit()
-        #We use a new browser session to make sure that no information
-        #of Harry's is coming through from cookies ,etc.
+        ##We use a new browser session to make sure that no information
+        ##of Harry's is coming through from cookies ,etc.
+        self.browser = webdriver.Firefox()
+
         self.browser.get(self.live_server_url)
-        page_text = self.browser.find_elemeny_by_tag_name('body').text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy chicken', page_text)
         self.assertNotIn('cook', page_text)
 
