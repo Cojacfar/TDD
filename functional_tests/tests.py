@@ -1,7 +1,7 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-
+import unittest
 
 class NewVisitorTest(LiveServerTestCase):
     
@@ -33,6 +33,8 @@ class NewVisitorTest(LiveServerTestCase):
 # When he hits enter, the page updates and now the page lists:
 # "1: Buy Chicken"
         inputbox.send_keys(Keys.ENTER)
+        harry_list_url = self.browser.current_url
+        self.assertRegexpMatches(harry_list_url, '/lists/.+')
         self.check_for_row_in_list_table('1: Buy chicken')
 
 # There is still a text box inviting him to add another item. He enters
@@ -45,13 +47,31 @@ class NewVisitorTest(LiveServerTestCase):
         
         self.check_for_row_in_list_table('2: Cook the chicken tonight')
         self.check_for_row_in_list_table('1: Buy chicken')
-        self.fail('Finish the test!')
-# Harry wonders whether or not the site will remember his list. Then he sees
-# that the site has generated an unique URL for him -- there is some 
-# explanatory text to that effect.
 
-# He visits that URL - his to-do lists is still there.
+        #Now a new user, Francis, comes along to the site
+        self.browser.quit()
+        #We use a new browser session to make sure that no information
+        #of Harry's is coming through from cookies ,etc.
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_elemeny_by_tag_name('body').text
+        self.assertNotIn('Buy chicken', page_text)
+        self.assertNotIn('cook', page_text)
 
+        #Francis starts a new list by entering a new item, He
+        # is less interesting than Harry...
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+
+        #Francis gets his own unique URL
+        francis_list_url = self.browser.current_url
+        self.assertRegexpMatches(francis_list_url, '/lists/.+')
+        self.assertNotEqual(francis_list_url, harry_list_url)
+
+        #Again, there is no trace of Harry's list
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy chicken', page_text)
+        self.assertIn('Buy milk', page_text)
 # Satisfied, he goes back to sleep.
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
