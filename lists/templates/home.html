@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
-
+<head>
+	<meta name="viewport" conent="width=device-width, initial-scale=1.0">
+	<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="/static/base.css" rel="stylesheet" media="screen">
+	<title> To-Do lists</title>
 {% block header_text %}Start a To-Do list{% endblock %}
 
 {% block form %}
+
+
 	<form method="POST" action="/lists/new">
 		<input id="id_new_item" name="item_text" placeholder="Enter a to-do item" />
 		{% csrf_token %}
