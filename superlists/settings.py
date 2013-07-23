@@ -1,6 +1,7 @@
 # Django settings for superlists project.
 from os import path
 
+PROJECT_ROOT = path.join(path.dirname(__file__), '..')
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -13,7 +14,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'TDD.db',                      # Or path to database file if using sqlite3.
+        'NAME': path.abspath(path.join(PROJECT_ROOT, '../database/database.sqlite')),                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
