@@ -2,9 +2,25 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
+import sys
 
 class NewVisitorTest(LiveServerTestCase):
     
+    @classmethod
+    def setUpClass(cls):
+        for arg in sys.argv:
+            if 'liveserver' in arg:
+                cls.server_url = 'http://' + arg.split('=')[1]
+                return
+        LiveServerTestCase.setUpClass()
+        cls.server_url = cls.live_server_url
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.server_url == cls.live_server_url:
+            LiveServerTestCase.tearDownClass()
+
+
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.browser.implicitly_wait(3)
@@ -16,7 +32,7 @@ class NewVisitorTest(LiveServerTestCase):
         
 # Harry has a lot to do, and he has found the perfect to-do app to do it with.
 # He goes to check out its homepage
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 #He notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
         header_text = self.browser.find_element_by_tag_name('h1').text
@@ -54,7 +70,7 @@ class NewVisitorTest(LiveServerTestCase):
         ##of Harry's is coming through from cookies ,etc.
         self.browser = webdriver.Firefox()
 
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy chicken', page_text)
         self.assertNotIn('cook', page_text)
@@ -82,7 +98,7 @@ class NewVisitorTest(LiveServerTestCase):
 
     def test_layout_and_styling(self):
         #Harry goes to the home page
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         #He notices the input box is nicely centered
         inputbox = self.browser.find_element_by_tag_name('input')
